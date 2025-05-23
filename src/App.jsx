@@ -1,12 +1,12 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-// Helper function to check matching pairs
+// Helper function to check if brackets match
 const isMatchingPair = (open, close) =>
   (open === "(" && close === ")") ||
   (open === "{" && close === "}") ||
   (open === "[" && close === "]");
 
-// Stack item with bracket color
+// StackItem: Colored bracket box
 const StackItem = ({ char }) => {
   const colors = {
     "(": "#6BCB77",
@@ -40,6 +40,7 @@ const StackItem = ({ char }) => {
   );
 };
 
+// Stack visual component
 const Stack = ({ stack }) => (
   <div
     style={{
@@ -67,7 +68,7 @@ const Stack = ({ stack }) => (
     >
       Stack (Top ↓)
     </div>
-    {stack.length === 0 && (
+    {stack.length === 0 ? (
       <div
         style={{
           color: "#aaa",
@@ -79,21 +80,19 @@ const Stack = ({ stack }) => (
       >
         Stack is empty
       </div>
+    ) : (
+      stack.map((ch, i) => <StackItem key={i} char={ch} />)
     )}
-    {stack.map((ch, i) => (
-      <StackItem key={i} char={ch} />
-    ))}
   </div>
 );
 
+// Main App component
 export default function App() {
   const [input, setInput] = useState("");
   const [index, setIndex] = useState(0);
   const [stack, setStack] = useState([]);
   const [currentChar, setCurrentChar] = useState(null);
-  const [message, setMessage] = useState(
-    "Enter a bracket expression and press Next Step"
-  );
+  const [message, setMessage] = useState("Enter a bracket expression and press Next Step");
   const [finished, setFinished] = useState(false);
 
   const reset = () => {
@@ -108,21 +107,13 @@ export default function App() {
     if (finished) return;
 
     if (index >= input.length) {
-      if (stack.length === 0) {
-        setMessage(
-          <span style={{ color: "green" }}>
-            ✅ Expression is <b>VALID</b> (stack empty at end)
-          </span>
-        );
-      } else {
-        setMessage(
-          <span style={{ color: "red" }}>
-            ❌ Expression is <b>INVALID</b> (stack NOT empty at end)
-          </span>
-        );
-      }
       setCurrentChar(null);
       setFinished(true);
+      if (stack.length === 0) {
+        setMessage(<span style={{ color: "green" }}>✅ Expression is <b>VALID</b> (stack empty at end)</span>);
+      } else {
+        setMessage(<span style={{ color: "red" }}>❌ Expression is <b>INVALID</b> (stack NOT empty at end)</span>);
+      }
       return;
     }
 
@@ -181,7 +172,7 @@ export default function App() {
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#ffffff", // Pure white background
+        backgroundColor: "#ffffff",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -189,16 +180,18 @@ export default function App() {
       }}
     >
       <div
-        style={{
-          maxWidth: 480,
-          width: "100%",
-          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-          padding: 20,
-          borderRadius: 12,
-          boxShadow: "0 0 30px rgba(0,0,0,0.1)",
-          background: "#ffffff",
-        }}
-      >
+  style={{
+    width: "100vw",
+    height: "100vh",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    padding: 20,
+    borderRadius: 0, // Usually, full screen divs don't have rounded corners, but you can keep it if you want
+    boxShadow: "0 0 30px rgba(0,0,0,0.1)",
+    background: "#ffffff",
+    overflow: "auto", // in case content overflows vertically
+  }}
+>
+
         <h1
           style={{
             color: "#3A86FF",
