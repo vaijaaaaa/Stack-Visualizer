@@ -55,6 +55,7 @@ const Stack = ({ stack }) => (
       flexDirection: "column-reverse",
       alignItems: "center",
       boxShadow: "0 0 15px rgba(77, 150, 255, 0.3)",
+      alignSelf: "center",
     }}
   >
     <div
@@ -92,7 +93,9 @@ export default function App() {
   const [index, setIndex] = useState(0);
   const [stack, setStack] = useState([]);
   const [currentChar, setCurrentChar] = useState(null);
-  const [message, setMessage] = useState("Enter a bracket expression and press Next Step");
+  const [message, setMessage] = useState(
+    "Enter a bracket expression and press Next Step"
+  );
   const [finished, setFinished] = useState(false);
 
   const reset = () => {
@@ -110,9 +113,17 @@ export default function App() {
       setCurrentChar(null);
       setFinished(true);
       if (stack.length === 0) {
-        setMessage(<span style={{ color: "green" }}>✅ Expression is <b>VALID</b> (stack empty at end)</span>);
+        setMessage(
+          <span style={{ color: "green" }}>
+            ✅ Expression is <b>VALID</b> (stack empty at end)
+          </span>
+        );
       } else {
-        setMessage(<span style={{ color: "red" }}>❌ Expression is <b>INVALID</b> (stack NOT empty at end)</span>);
+        setMessage(
+          <span style={{ color: "red" }}>
+            ❌ Expression is <b>INVALID</b> (stack NOT empty at end)
+          </span>
+        );
       }
       return;
     }
@@ -168,36 +179,46 @@ export default function App() {
     setIndex((prev) => prev + 1);
   };
 
+  const handleInputChange = (e) => {
+    if (index === 0) {
+      setInput(e.target.value);
+    }
+  };
+
+  const isNextDisabled = finished || input.length === 0;
+
   return (
     <div
       style={{
         minHeight: "100vh",
-        backgroundColor: "#ffffff",
+        width: "100vw",
+        backgroundColor: "#e8f0fe",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         padding: 20,
+        boxSizing: "border-box",
       }}
     >
       <div
-  style={{
-    width: "100vw",
-    height: "100vh",
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    padding: 20,
-    borderRadius: 0, // Usually, full screen divs don't have rounded corners, but you can keep it if you want
-    boxShadow: "0 0 30px rgba(0,0,0,0.1)",
-    background: "#ffffff",
-    overflow: "auto", // in case content overflows vertically
-  }}
->
-
+        style={{
+          maxWidth: 500,
+          width: "100%",
+          backgroundColor: "#fff",
+          borderRadius: 12,
+          boxShadow: "0 0 30px rgba(0,0,0,0.1)",
+          padding: 24,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <h1
           style={{
             color: "#3A86FF",
             textAlign: "center",
             marginBottom: 24,
             fontWeight: "900",
+            fontSize: "clamp(20px, 5vw, 28px)",
           }}
         >
           Stack Visualizer: Bracket Validator
@@ -207,17 +228,22 @@ export default function App() {
           type="text"
           placeholder="Enter bracket expression e.g. {[()]}"
           value={input}
-          disabled={index !== 0}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleInputChange}
           style={{
             width: "100%",
-            fontSize: 20,
-            padding: "10px 12px",
+            fontSize: 18,
+            padding: "12px 16px",
             borderRadius: 8,
-            border: "2px solid #4D96FF",
+            border: `2px solid ${index > 0 ? "#ccc" : "#4D96FF"}`,
             marginBottom: 20,
             outline: "none",
+            boxSizing: "border-box",
+            backgroundColor: index > 0 ? "#f5f5f5" : "#fff",
+            color: index > 0 ? "#666" : "#000",
+            cursor: index > 0 ? "not-allowed" : "text",
           }}
+          readOnly={index > 0}
+          aria-label="Bracket expression input"
         />
 
         <div
@@ -226,28 +252,31 @@ export default function App() {
             gap: 16,
             justifyContent: "center",
             marginBottom: 24,
+            flexWrap: "wrap",
           }}
         >
           <button
             onClick={nextStep}
-            disabled={finished || input.length === 0}
+            disabled={isNextDisabled}
             style={{
-              padding: "10px 20px",
+              padding: "12px 24px",
               fontSize: 16,
-              backgroundColor: "#3A86FF",
+              backgroundColor: isNextDisabled ? "#ccc" : "#3A86FF",
               color: "white",
               border: "none",
               borderRadius: 8,
-              cursor: "pointer",
-              boxShadow: "0 4px 10px #3A86FFaa",
+              cursor: isNextDisabled ? "not-allowed" : "pointer",
+              boxShadow: isNextDisabled ? "none" : "0 4px 10px #3A86FFaa",
+              transition: "all 0.2s ease",
             }}
+            aria-label="Execute next step of validation"
           >
             Next Step
           </button>
           <button
             onClick={reset}
             style={{
-              padding: "10px 20px",
+              padding: "12px 24px",
               fontSize: 16,
               backgroundColor: "#FF5C5C",
               color: "white",
@@ -255,7 +284,9 @@ export default function App() {
               borderRadius: 8,
               cursor: "pointer",
               boxShadow: "0 4px 10px #FF5C5Caa",
+              transition: "all 0.2s ease",
             }}
+            aria-label="Reset validation"
           >
             Reset
           </button>
@@ -263,7 +294,7 @@ export default function App() {
 
         <div
           style={{
-            fontSize: 20,
+            fontSize: 18,
             marginBottom: 20,
             textAlign: "center",
             fontWeight: "600",
@@ -271,21 +302,26 @@ export default function App() {
           }}
         >
           Current character:{" "}
-          <span style={{ color: "#4D96FF", fontSize: 24 }}>
+          <span style={{ color: "#4D96FF", fontSize: 22 }}>
             {currentChar === null ? "-" : `'${currentChar}'`}
           </span>
         </div>
 
         <div
           style={{
-            fontSize: 18,
-            minHeight: 72,
+            fontSize: 16,
+            minHeight: 80,
             backgroundColor: "#F0F4FF",
-            padding: 14,
+            padding: 16,
             borderRadius: 10,
             color: "#333",
             boxShadow: "inset 0 0 8px #A9C0FF",
             userSelect: "text",
+            lineHeight: "1.4",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
           }}
         >
           {message}
