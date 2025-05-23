@@ -6,7 +6,7 @@ const isMatchingPair = (open, close) =>
   (open === "{" && close === "}") ||
   (open === "[" && close === "]");
 
-// Single Stack Item component with styling
+// Stack item with bracket color
 const StackItem = ({ char }) => {
   const colors = {
     "(": "#6BCB77",
@@ -40,7 +40,6 @@ const StackItem = ({ char }) => {
   );
 };
 
-// Stack container component
 const Stack = ({ stack }) => (
   <div
     style={{
@@ -48,7 +47,7 @@ const Stack = ({ stack }) => (
       padding: 15,
       width: 100,
       minHeight: 240,
-      background: "#f9f9f9",
+      background: "#fff",
       border: "2px solid #4D96FF",
       borderRadius: 12,
       display: "flex",
@@ -87,7 +86,6 @@ const Stack = ({ stack }) => (
   </div>
 );
 
-// Main App component
 export default function App() {
   const [input, setInput] = useState("");
   const [index, setIndex] = useState(0);
@@ -132,7 +130,6 @@ export default function App() {
     setCurrentChar(ch);
 
     if ("({[".includes(ch)) {
-      // Opening bracket - push it
       setStack((prev) => [...prev, ch]);
       setMessage(
         <>
@@ -141,7 +138,6 @@ export default function App() {
         </>
       );
     } else if (")}]".includes(ch)) {
-      // Closing bracket - check match & pop
       if (stack.length === 0) {
         setMessage(
           <span style={{ color: "red" }}>
@@ -184,121 +180,126 @@ export default function App() {
   return (
     <div
       style={{
-        maxWidth: 480,
-        margin: "40px auto",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        minHeight: "100vh",
+        backgroundColor: "#ffffff", // Pure white background
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         padding: 20,
-        borderRadius: 12,
-        boxShadow: "0 0 30px rgba(0,0,0,0.1)",
-        background: "#ffffff",
       }}
     >
-      <h1
+      <div
         style={{
-          color: "#3A86FF",
-          textAlign: "center",
-          marginBottom: 24,
-          fontWeight: "900",
-        }}
-      >
-        Stack Visualizer: Bracket Validator
-      </h1>
-
-      <input
-        type="text"
-        placeholder="Enter bracket expression e.g. {[()]}"
-        value={input}
-        disabled={index !== 0}
-        onChange={(e) => setInput(e.target.value)}
-        style={{
+          maxWidth: 480,
           width: "100%",
-          fontSize: 20,
-          padding: "10px 12px",
-          borderRadius: 8,
-          border: "2px solid #4D96FF",
-          marginBottom: 20,
-          outline: "none",
-        }}
-      />
-
-      <div
-        style={{
-          display: "flex",
-          gap: 16,
-          justifyContent: "center",
-          marginBottom: 24,
+          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+          padding: 20,
+          borderRadius: 12,
+          boxShadow: "0 0 30px rgba(0,0,0,0.1)",
+          background: "#ffffff",
         }}
       >
-        <button
-          onClick={nextStep}
-          disabled={finished || input.length === 0}
+        <h1
           style={{
-            padding: "10px 20px",
-            fontSize: 16,
-            backgroundColor: "#3A86FF",
-            color: "white",
-            border: "none",
-            borderRadius: 8,
-            cursor: "pointer",
-            boxShadow: "0 4px 10px #3A86FFaa",
-            transition: "background-color 0.2s",
+            color: "#3A86FF",
+            textAlign: "center",
+            marginBottom: 24,
+            fontWeight: "900",
           }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#265FCF")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#3A86FF")}
         >
-          Next Step
-        </button>
-        <button
-          onClick={reset}
+          Stack Visualizer: Bracket Validator
+        </h1>
+
+        <input
+          type="text"
+          placeholder="Enter bracket expression e.g. {[()]}"
+          value={input}
+          disabled={index !== 0}
+          onChange={(e) => setInput(e.target.value)}
           style={{
-            padding: "10px 20px",
-            fontSize: 16,
-            backgroundColor: "#FF5C5C",
-            color: "white",
-            border: "none",
+            width: "100%",
+            fontSize: 20,
+            padding: "10px 12px",
             borderRadius: 8,
-            cursor: "pointer",
-            boxShadow: "0 4px 10px #FF5C5Caa",
-            transition: "background-color 0.2s",
+            border: "2px solid #4D96FF",
+            marginBottom: 20,
+            outline: "none",
           }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#C94343")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#FF5C5C")}
+        />
+
+        <div
+          style={{
+            display: "flex",
+            gap: 16,
+            justifyContent: "center",
+            marginBottom: 24,
+          }}
         >
-          Reset
-        </button>
-      </div>
+          <button
+            onClick={nextStep}
+            disabled={finished || input.length === 0}
+            style={{
+              padding: "10px 20px",
+              fontSize: 16,
+              backgroundColor: "#3A86FF",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              boxShadow: "0 4px 10px #3A86FFaa",
+            }}
+          >
+            Next Step
+          </button>
+          <button
+            onClick={reset}
+            style={{
+              padding: "10px 20px",
+              fontSize: 16,
+              backgroundColor: "#FF5C5C",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              boxShadow: "0 4px 10px #FF5C5Caa",
+            }}
+          >
+            Reset
+          </button>
+        </div>
 
-      <div
-        style={{
-          fontSize: 20,
-          marginBottom: 20,
-          textAlign: "center",
-          fontWeight: "600",
-          userSelect: "none",
-        }}
-      >
-        Current character:{" "}
-        <span style={{ color: "#4D96FF", fontSize: 24 }}>
-          {currentChar === null ? "-" : `'${currentChar}'`}
-        </span>
-      </div>
+        <div
+          style={{
+            fontSize: 20,
+            marginBottom: 20,
+            textAlign: "center",
+            fontWeight: "600",
+            userSelect: "none",
+          }}
+        >
+          Current character:{" "}
+          <span style={{ color: "#4D96FF", fontSize: 24 }}>
+            {currentChar === null ? "-" : `'${currentChar}'`}
+          </span>
+        </div>
 
-      <div
-        style={{
-          fontSize: 18,
-          minHeight: 72,
-          backgroundColor: "#F0F4FF",
-          padding: 14,
-          borderRadius: 10,
-          color: "#333",
-          boxShadow: "inset 0 0 8px #A9C0FF",
-          userSelect: "text",
-        }}
-      >
-        {message}
-      </div>
+        <div
+          style={{
+            fontSize: 18,
+            minHeight: 72,
+            backgroundColor: "#F0F4FF",
+            padding: 14,
+            borderRadius: 10,
+            color: "#333",
+            boxShadow: "inset 0 0 8px #A9C0FF",
+            userSelect: "text",
+          }}
+        >
+          {message}
+        </div>
 
-      <Stack stack={stack} />
+        <Stack stack={stack} />
+      </div>
     </div>
   );
 }
